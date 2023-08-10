@@ -69,40 +69,6 @@ async function renderHomePage() {
   });
 }
 
-  // const eventList = await fetchTicketEvents();
-  // const eventsContainer = document.querySelector('.events');
-
-  
-
-    // eventList.forEach(event =>{
-    //   var imageurl = addImage(event.name);
-    //   const eventCard = document.createElement('div');
-    //   eventCard.classList.add('event-card');
-
-    //   const contentMarkup = `
-    //   <header></header>
-    //   <div class="event-card-content">
-
-    //     <img class="event-image" src="${imageurl}"> </img>
-      
-    //     <div class="event-card-name">
-    //       <p> ${event.name}</p>
-    //     </div> 
-          
-    //     <div class="event-card-data">
-    //       <p> ${event.description} </p>
-    //       <p> ${event.venue.location} </p>
-    //       <p> ${event.startDate} </p>
-    //       <p> ${event.endDate} </p>
-    //     </div>
-    //   </div>`;
-
-    //   eventCard.innerHTML = contentMarkup;
-    //   eventsContainer.appendChild(eventCard);
-
-    // });
-//}
-
 function addImage(name){
   var imagesrc;
   if(name =="Untold"){
@@ -152,7 +118,7 @@ const createEventElement = (eventData, title) =>{
   const { id, description, name, ticketCategories} = eventData;
   const eventDiv = document.createElement('div');
   const evenWrapperClasses = useStyle('eventWrapper');
-  const actionsWrapperClasses = useStyle('actioSWrapper');
+  const actionsWrapperClasses = useStyle('actionsWrapper');
   const quantityClasses = useStyle('quantity');
   const inputClasses = useStyle('input');
   const quantityActionClasses = useStyle('quantityActions');
@@ -166,11 +132,14 @@ const createEventElement = (eventData, title) =>{
 
   const contentMarkup = `
     <header>
-      <h2 class="event-title text-2xl font-bold> ${name}</h2>
+      <h2 class="event-title text-2xl font-bold text-center"> ${name}</h2>
     </header>
-    <div class="content">
-      <img src="${imageurl}" alt="${name}" class=event-image w-full height-200 rounded object-cover></img>
-      <p class="description text-gray-700">${description}</p>
+    <div class="content w-full">
+      <img src="${imageurl}" alt="${name}" class="event-image w-full height-auto rounded object-cover"></img>
+      <p class="description text-gray-700 text-center font-bold">${description}</p>
+      <p class="location text-gray-700 text-center  ml-2">${eventData.venue.location}</p>
+      <p class="data text-gray-700 text-center ml-2">${eventData.startDate.slice(0, 10)} - ${eventData.startDate.slice(0, 10)}</p>
+
     </div>
   `;
 
@@ -178,96 +147,85 @@ const createEventElement = (eventData, title) =>{
 
   const actions = document.createElement('div');
 
+   actions.classList.add(...actionsWrapperClasses);
 
+  const categoriesOptions = ticketCategories.map(tc =>
+    `<option value="${tc.id}">${tc.description} - ${tc.price} $</option>`
+  );
 
-  ////ERRR
+  const ticketTypeMarkup =`
+      <h2 class="text-lg font-bold mb-2">Choose Ticket Type:</h2>
+      <select id="ticketType" name="ticketType" class="select ${title}-ticket-type border border">     
+        ${categoriesOptions.join('\n')}
+      </select>
+    `;
 
-  
-  if (Array.isArray(actionsWrapperClasses)) {
-    actions.classList.add(...actionsWrapperClasses);
-  } else {
-    console.error("actionsWrapperClasses is not an array or is undefined.");
-  }
-  // actions.classList.add(...actionsWrapperClasses);
+  actions.innerHTML = ticketTypeMarkup;
 
+  const quantity = document.createElement('div');
+  quantity.classList.add(...quantityClasses);
 
-  // const categoriesOptions = ticketCategories.map(
-  //   `<option value=${ticketCategories.id}>${ticketCategories.description}</option>`
-  // );
+  const input = document.createElement('input');
+  input.classList.add(...inputClasses);
+  input.type = 'number';
+  input.min = '0';
+  input.value = '0';
 
-  // const ticketTypeMarkup =`
-  //     <h2 class="text-lg font-bold mb-2">Choose Ticket Type:</h2>
-  //     <select id="ticketType" name="ticketType" class="select ${title}-ticket-type border border>
-  //       ${categoriesOptions.join('\n')}
-  //     </select>
-  //   `;
+  input.addEventListener('blur', () => {
+    if(!input.value) {
+      input.value = 0;
+    }
+  });
 
-  // actions.innerHTML = ticketTypeMarkup;
+  input.addEventListener('input', () => {
+    const currentQuantity = parseInt(input.value);
+    if(currentQuantity > 0) {
+      addToCart.disabled = false;
+    } else {
+      addToCart.disabled = true;
+    }
+  });
 
-  // const quantity = document.createElement('div');
-  // quantity.classList.add(...quantityClasses);
+  quantity.appendChild(input);
 
-  // const input = document.createElement('input');
-  // input.classList.add(...inputClasses);
-  // input.type = 'number';
-  // input.min = '0';
-  // input.value = '0';
+  const quantityActions = document.createElement('div');
+  quantityActions.classList.add(...quantityActionClasses);
 
-  // input.addEventListener('blur', () => {
-  //   if(!input.value) {
-  //     input.value = 0;
-  //   }
-  // });
+  const increase = document.createElement('button');
+  increase.classList.add(...increaseBtnClasses);
+  increase.innerText = '+';
+  increase.addEventListener('click', () => {
+    input.value = parseInt(input.value) + 1;
+    const currentQuantity = parseInt(input.value);
+    if(currentQuantity > 0) {
+      addToCart.disabled = false;
+    } else {
+      addToCart.disabled = true;
+    }
+  });
 
-  // input.addEventListener('input', () => {
-  //   const currentQuantity = parseInt(input.value);
-  //   if(currentQuantity > 0) {
-  //     addToCart.disabled = false;
-  //   } else {
-  //     addToCart.disabled = true;
-  //   }
-  // });
+  const decrease = document.createElement('button');
+  decrease.classList.add(...decreaseBtnClasses);
+  decrease.innerText = '-';
+  decrease.addEventListener('click', () => {
+    const currentValue = parseInt(input.value);
+    if(currentValue > 0) {
+      input.value = currentValue -1;
+    }
+    const currentQuantity = parseInt(input.value);
+    if(currentQuantity > 0) {
+      addToCart.disabled = false;
+    } else {
+      addToCart.disabled = true;
+    }
+  });
 
-  // quantity.appendChild(input);
+  quantityActions.appendChild(increase);
+  quantityActions.appendChild(decrease);
 
-  // const quantityActions = document.createElement('div');
-  // quantityActions.classList.add(...quantityActionClasses);
-
-  // const increase = document.createElement('button');
-  // increase.classList.add(...increaseBtnClasses);
-  // increase.innerText = '+';
-  // increase.addEventListener('click', () => {
-  //   input.value = parseInt(input.value) + 1;
-  //   const currentQuantity = parseInt(input.value);
-  //   if(currentQuantity > 0) {
-  //     addToCart.disabled = false;
-  //   } else {
-  //     addToCart.disabled = true;
-  //   }
-  // });
-
-  // const decrease = document.createElement('button');
-  // decrease.classList.add(...decreaseBtnClasses);
-  // decrease.innerText = '-';
-  // decrease.addEventListener('click', () => {
-  //   const currentValue = parseInt(input.value);
-  //   if(currentValue > 0) {
-  //     input.value = currentValue -1;
-  //   }
-  //   const currentQuantity = parseInt(input.value);
-  //   if(currentQuantity > 0) {
-  //     addToCart.disabled = false;
-  //   } else {
-  //     addToCart.disabled = true;
-  //   }
-  // });
-
-  // quantityActions.appendChild(increase);
-  // quantityActions.appendChild(decrease);
-
-  // quantity.appendChild(quantityActions);
-  // actions.appendChild(quantity);
-  // eventDiv.appendChild(actions);
+  quantity.appendChild(quantityActions);
+  actions.appendChild(quantity);
+  eventDiv.appendChild(actions);
 
   const eventFooter = document.createElement('footer');
   const addToCart = document.createElement('button');
@@ -277,6 +235,10 @@ const createEventElement = (eventData, title) =>{
 
   addToCart.addEventListener('click', () => {
     // handledAddToCart(title, id, input, addToCart);
+    addToCart.disabled = true;
+    decrease.disabled = true;
+    input.value = '0';
+    document.querySelector('#ticketType').selectedIndex = 0;
   });
 
   eventFooter.appendChild(addToCart);
