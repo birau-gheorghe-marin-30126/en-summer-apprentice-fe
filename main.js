@@ -234,7 +234,8 @@ const createEventElement = (eventData, title) =>{
   addToCart.disabled = true;
 
   addToCart.addEventListener('click', () => {
-    // handledAddToCart(title, id, input, addToCart);
+    handledAddToCart(title, id, input, addToCart);
+
     addToCart.disabled = true;
     decrease.disabled = true;
     input.value = '0';
@@ -247,6 +248,38 @@ const createEventElement = (eventData, title) =>{
   return eventDiv;
 };
 
+const handledAddToCart = (title, id, input, addToCart) => {
+  const ticketType = document.querySelector(`.${kebabCase(title)}-ticket-type`).value;
+  const quantity = input.value;
+  if(parseInt(quantity)) {
+    fetch('http://localhost:8082/api/orders',  {
+      mode:'cors',
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify( {
+        ticketCategoryId:+ticketType,
+        eventID:+id,
+        numberOfTickets:+quantity,
+      })
+  }).then((response) => {
+    return response.json().then((data) => {
+      if(!response.ok) {
+        console.log("Something went wrong...");
+      }
+      return data;
+    })
+  }).then((data) => {
+    addPurchase(data);
+    console.log("Done!");
+    input.value = 0;
+    addToCart.disabled = true;
+  })
+} else {
+  //Not int. TO BE TREATED
+}
+}
 
 function renderOrdersPage(categories) {
   const mainContentDiv = document.querySelector('.main-content-component');
