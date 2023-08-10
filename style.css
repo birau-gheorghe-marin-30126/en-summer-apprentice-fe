@@ -71,3 +71,13 @@ h1 {
   margin-bottom: 40px;
 }
 
+.event-image {
+  height: 100px;
+  width: 50%;
+}
+
+.event-cart-name {
+  color: hsla(0, 9%, 53%, 0.782);
+  height: 300px;
+  width: 80%;
+}
