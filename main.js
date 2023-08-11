@@ -1,5 +1,6 @@
 import { useStyle } from './src/components/styles';
 import { kebabCase, addPurchase } from './src/utils';
+import { removeLoader, addLoader } from './src/components/loader';  
 
 // Navigate to a specific URL
 function navigateTo(url) {
@@ -63,8 +64,15 @@ async function renderHomePage() {
   const mainContentDiv = document.querySelector('.main-content-component');
   mainContentDiv.innerHTML = getHomePageTemplate();
 
+  addLoader();
+
   console.log('function', fetchTicketEvents());
-  fetchTicketEvents().then((data) => {
+  fetchTicketEvents()
+    .then((data) => {
+      //events = data;
+      setTimeout(() => {
+        removeLoader();
+      }, 200);
     addEvents(data);
   });
 }
@@ -252,6 +260,7 @@ const handledAddToCart = (title, id, input, addToCart) => {
   const ticketType = document.querySelector(`.${kebabCase(title)}-ticket-type`).value;
   const quantity = input.value;
   if(parseInt(quantity)) {
+    addLoader();
     fetch('http://localhost:8082/api/orders',  {
       mode:'cors',
       method:"POST",
@@ -276,10 +285,18 @@ const handledAddToCart = (title, id, input, addToCart) => {
     input.value = 0;
     addToCart.disabled = true;
   })
-} else {
+  .finally(() => {
+    setTimeout(() => {
+      removeLoader();
+    }, 200);
+    
+  })
+
+
+  } else {
   //Not int. TO BE TREATED
-}
-}
+  }
+};
 
 function renderOrdersPage(categories) {
   const mainContentDiv = document.querySelector('.main-content-component');
