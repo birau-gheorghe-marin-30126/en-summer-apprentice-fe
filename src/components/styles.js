@@ -10,8 +10,8 @@ const bookOfStyles = {
     ],
     purchaseTitle: ['text-lg', 'font-medium', 'text-gray-900', 'flex-1'],
     purchaseQuantity: [
-      'w-[50px]',
       'text-center',
+      'w-[50px]',
       'py-1',
       'px-2',
       'border',
@@ -27,7 +27,7 @@ const bookOfStyles = {
       'focus:outline-none',
       'focus:shadow-outline',
     ],
-    purchaseQuantityWrapper: ['flex', 'flex-row', 'justify-end', 'flex-1'],
+    purchaseQuantityWrapper: ['text-center', 'flex', 'flex-row', 'justify-start', 'flex-1'],
     purchaseType: [
       'w-fit',
       'py-1',
@@ -50,7 +50,7 @@ const bookOfStyles = {
       'text-orange-700',
       'flex-1',
     ],
-    purchaseTypeWrapper: ['flex', 'flex-row', 'justify-end', 'flex-1'],
+    purchaseTypeWrapper: ['flex', 'flex-row', 'justify-start', 'flex-1'],
     purchaseDate: ['text-center', 'flex-1', 'hidden', 'md:flex'],
     purchasePrice: ['text-center', 'w-12', 'hidden', 'md:flex'],
     actions: ['sm:mt-0', 'sm:text-right', 'w-28'],
