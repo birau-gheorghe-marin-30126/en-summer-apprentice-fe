@@ -4,20 +4,43 @@ import { removeLoader, addLoader } from './src/components/loader';
 import { createEventElement } from './src/components/createEvent';
 import { createOrder } from './src/components/createOrder';
 
+
+let events = null;
+
 // Navigate to a specific URL
 function navigateTo(url) {
   history.pushState(null, null, url);
   renderContent(url);
 }
 // HTML templates
+// function getHomePageTemplate() {
+//   return `
+//    <div id="content" >
+//       <img src="./src/assets/Endava.png" alt="summer">
+//       <div class="events flex items-center justify-center flex-wrap">
+//       </div>
+//     </div>
+//   `;
+// }
+
 function getHomePageTemplate() {
   return `
-   <div id="content" >
+    <div id="content" class="hidden">
       <img src="./src/assets/Endava.png" alt="summer">
+      <div class="flex flex-col items-center">
+        <div class="w-80">
+          <h1>Explore Events</h1>
+          <div class="filters flex flex-col">
+            <input type="text" id="filter-name" placeholder="Filter by name" class="px-4 mt-4 mb-4 py-2 border" />
+            <button id="filter-button" class="filter-btn px-4 py-2 text-white rounded-lg">Filter</button>
+          </div>
+        </div>
+      </div>
       <div class="events flex items-center justify-center flex-wrap">
       </div>
+      <div class="cart"></div>
     </div>
-  `;
+    `;
 }
 
 function getOrdersPageTemplate() {
@@ -88,7 +111,7 @@ async function renderHomePage() {
   console.log('function', fetchEvents());
   fetchEvents()
     .then((data) => {
-      //events = data;
+      events = data;
       setTimeout(() => {
         removeLoader();
       }, 200);
@@ -125,6 +148,32 @@ const createEvent = (eventData) =>{
   return eventElement;
 };
 
+function liveSearch() {
+  const filterInput = document.querySelector('#filter-name');
+
+  if(filterInput) {
+    const searchValue = filterInput.value;
+
+    if(searchValue !== undefined) {
+      const filteredEvents = events.filter((event) =>
+        event.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+
+      addEvents(filteredEvents);
+    }
+  }
+}
+
+function setupFilterEvents() {
+  const nameFilterInput = document.querySelector('#filter-name');
+
+  if(nameFilterInput) {
+    const filterInterval = 500;
+    nameFilterInput.addEventListener('keyup', () => {
+      setTimeout(liveSearch, filterInterval);
+    });
+  }
+}
 
 function renderOrdersPage(categories) {
   const mainContentDiv = document.querySelector('.main-content-component');
@@ -170,3 +219,4 @@ setupNavigationEvents();
 setupMobileMenuEvent();
 setupPopstateEvent();
 setupInitialPage();
+setupFilterEvents();
