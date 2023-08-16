@@ -6,6 +6,11 @@
 		<link rel="stylesheet" href="./src/styles.css" />
 		<link rel="stylesheet" href="./style.css" />
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&amp;display=swap" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/d05f81700b.js" crossorigin="anonymous"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+		/>
 		<title>Ticket Management</title>
 </head>
 	<body>
@@ -64,8 +69,17 @@
 				</ul>
 			</div>
 		</header>
-		<main class="main-content-component">
-		</main>
+		<div
+			id="loader"
+			class="opacity-100 fixed top-2/4 left-1/2 -translate-x-1/2 -translate-y-1/2"
+		>
+			<i
+				class="fa-solid fa-spinner fa-spin text-[50px] content-center"
+			></i>
+		</div>
+		<main class="main-content-component"></main>
 		<script type="module" src="./main.js"></script>
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> -->
 	</body>
 </html>
